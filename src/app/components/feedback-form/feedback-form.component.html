@@ -1,0 +1,132 @@
+<form [formGroup]="feedbackForm" (ngSubmit)="onSubmit()" class="feedback-form">
+  <!-- Postal Code and Municipality Section -->
+  <div class="location-section">
+    <mat-form-field appearance="outline">
+      <mat-label>Postal Code</mat-label>
+      <input matInput
+             formControlName="postalCode"
+             placeholder="A1A 1A1"
+             maxlength="7"
+             (keyup)="onPostalCodeKeyUp($event)">
+      <mat-hint align="end">{{remainingChars}} characters remaining</mat-hint>
+      <mat-error *ngIf="feedbackForm.get('postalCode')?.errors?.['required']">
+        Postal code is required
+      </mat-error>
+      <mat-error *ngIf="feedbackForm.get('postalCode')?.errors?.['pattern']">
+        Please enter a valid Canadian postal code (e.g., A1A 1A1)
+      </mat-error>
+    </mat-form-field>
+
+    <button mat-raised-button
+            color="primary"
+            type="button"
+            [disabled]="isGettingLocation"
+            (click)="getLocationPostalCode()">
+      <mat-icon>my_location</mat-icon>
+      {{ isGettingLocation ? 'Getting Location...' : 'Get My Location' }}
+    </button>
+  </div>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Municipality</mat-label>
+    <input matInput
+           formControlName="municipality"
+           placeholder="City/Town"
+           [readonly]="true">
+    <mat-spinner matSuffix
+                 diameter="20"
+                 *ngIf="isLoadingMunicipality">
+    </mat-spinner>
+    <mat-error *ngIf="feedbackForm.get('municipality')?.errors?.['required']">
+      Municipality is required
+    </mat-error>
+  </mat-form-field>
+
+  <!-- Weather Information and Feedback -->
+  <div class="weather-section" *ngIf="currentWeather">
+    <mat-card class="weather-card">
+      <mat-card-header>
+        <div *ngIf="currentWeather.condition" class="weather-icon-container">
+          <img [src]="currentWeather.condition.icon" 
+               [alt]="currentWeather.condition.text"
+               class="weather-icon">
+        </div>
+        <mat-card-title>Current Weather</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p><strong>Condition:</strong> {{currentWeather.condition?.text || 'N/A'}}</p>
+        <p><strong>Temperature:</strong> {{currentWeather.temp_c !== undefined ? currentWeather.temp_c + '°C' : 'N/A'}}</p>
+        <p><strong>UV Index:</strong> {{currentWeather.uv !== undefined ? currentWeather.uv : 'N/A'}}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <div class="feedback-buttons">
+          <button mat-icon-button
+                  type="button"
+                  color="primary"
+                  [class.selected]="selectedFeedback === 'positive'"
+                  (click)="setWeatherFeedback('positive')"
+                  matTooltip="I like this weather">
+            <mat-icon>thumb_up</mat-icon>
+          </button>
+          <button mat-icon-button
+                  type="button"
+                  color="warn"
+                  [class.selected]="selectedFeedback === 'negative'"
+                  (click)="setWeatherFeedback('negative')"
+                  matTooltip="I don't like this weather">
+            <mat-icon>thumb_down</mat-icon>
+          </button>
+        </div>
+        <mat-error *ngIf="feedbackForm.get('weatherFeedback')?.errors?.['required'] && feedbackForm.get('weatherFeedback')?.touched">
+          Please select your weather feedback
+        </mat-error>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <!-- Date and Time Section -->
+  <mat-form-field appearance="outline">
+    <mat-label>Date and Time of Interaction</mat-label>
+    <input matInput
+           type="datetime-local"
+           formControlName="dateOfInteraction"
+           [max]="currentDateTime"
+           [min]="minDateTime">
+    <mat-error *ngIf="feedbackForm.get('dateOfInteraction')?.errors?.['required']">
+      Date and time is required
+    </mat-error>
+  </mat-form-field>
+
+  <!-- Feedback Section -->
+  <mat-form-field appearance="outline">
+    <mat-label>Additional Feedback (Optional)</mat-label>
+    <textarea matInput
+              formControlName="feedback"
+              placeholder="Enter any additional feedback here"
+              rows="4">
+    </textarea>
+  </mat-form-field>
+
+  <!-- Submit Button -->
+  <div class="submit-section">
+    <button mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="!feedbackForm.valid || isSubmitting"
+            (click)="onSubmit()">
+      {{ isSubmitting ? 'Submitting...' : 'Submit Feedback' }}
+    </button>
+
+    <!-- Success Message -->
+    <div class="success-message" *ngIf="submitSuccess">
+      <mat-icon>check_circle</mat-icon>
+      Feedback submitted successfully!
+    </div>
+
+    <!-- Error Message -->
+    <div class="error-message" *ngIf="submitError">
+      <mat-icon>error</mat-icon>
+      {{ submitError }}
+    </div>
+  </div>
+</form>

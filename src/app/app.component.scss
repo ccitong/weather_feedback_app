@@ -1,0 +1,100 @@
+.app-container {
+  padding: 30px 60px;
+  min-height: 100vh;
+  box-sizing: border-box;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  margin-top: 100px; /* Adjusted for new header height */
+}
+
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background-color: #00539B;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+
+  .header-content {
+    max-width: 1400px;
+    height: 100%;
+    padding: 15px 60px;
+    display: flex;
+    align-items: flex-start; /* Changed from center to align items to top */
+    position: relative;
+  }
+
+  .york-logo {
+    height: 70px;
+    width: auto;
+    object-fit: contain;
+    margin-left: 0;
+    z-index: 1; /* Ensure logo stays above title */
+  }
+
+  .app-title {
+    font-size: 24px;
+    font-weight: 500;
+    color: white;
+    margin: 0;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+    position: absolute;
+    left: 60%;
+    bottom: 15px; /* Position from bottom */
+    transform: translateX(-50%);
+    text-align: center;
+  }
+}
+
+/* Responsive breakpoints */
+@media screen and (max-width: 768px) {
+  .app-header {
+    height: 90px;
+
+    .header-content {
+      padding: 12px 40px;
+    }
+
+    .york-logo {
+      height: 65px;
+    }
+
+    .app-title {
+      font-size: 22px;
+      bottom: 15px; /* Adjusted for smaller header */
+    }
+  }
+
+  .app-container {
+    padding: 25px 40px;
+    margin-top: 90px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .app-header {
+    height: 80px;
+
+    .header-content {
+      padding: 10px 20px;
+    }
+
+    .york-logo {
+      height: 55px;
+    }
+
+    .app-title {
+      font-size: 20px;
+      bottom: 12px; /* Adjusted for smallest header */
+    }
+  }
+
+  .app-container {
+    padding: 20px;
+    margin-top: 80px;
+  }
+}
