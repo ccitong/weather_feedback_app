@@ -31,6 +31,9 @@ feedback_summary.log
 /bazel-out
 node_modules/
 
+# Angular cache
+.angular/cache/
+
 # System Files
 .DS_Store
 Thumbs.db
