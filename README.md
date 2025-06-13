@@ -1,27 +1,130 @@
-# WeatherFeedbackApp
+# Weather Feedback Application
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.1.
+A web application that allows users to provide feedback about weather conditions in their area.
 
-## Development server
+## Backend Setup (FastAPI)
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+### Prerequisites
+- Python 3.8 or higher
+- VSCode
+- Git
 
-## Code scaffolding
+### Installation Steps
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/ccitong/weather_feedback_app.git
+   cd weather_feedback_app
+   ```
 
-## Build
+2. **Create and activate a virtual environment**
+   ```bash
+   # Create virtual environment
+   python -m venv .venv
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+   # Activate virtual environment
+   .venv\Scripts\activate
+   ```
 
-## Running unit tests
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+4. **Database Setup**
+   - Ensure you have SQL Server installed and running
+   - Run the database creation script:
+     ```bash
+     sqlcmd -S <your_server_name> -i create_db.sql
+     ```
 
-## Running end-to-end tests
+5. **Running the Backend**
+   ```bash
+   # Start the FastAPI server
+   uvicorn main:app --reload --port 3000
+   ```
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+   The server will start at `http://localhost:3000`
 
-## Further help
+### VSCode Configuration
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+1. **Select Python Interpreter**
+   - Press `Ctrl + Shift + P`
+   - Type "Python: Select Interpreter"
+   - Choose the interpreter from your `.venv` folder
+
+2. **Install VSCode Extensions**
+   - Python (Microsoft)
+   - Pylance
+   - SQL Server (mssql)
+
+3. **Debug Configuration**
+   Create a `.vscode/launch.json` file with:
+   ```json
+   {
+       "version": "0.2.0",
+       "configurations": [
+           {
+               "name": "FastAPI",
+               "type": "python",
+               "request": "launch",
+               "module": "uvicorn",
+               "args": [
+                   "main:app",
+                   "--reload",
+                   "--port",
+                   "3000"
+               ],
+               "jinja": true,
+               "justMyCode": true
+           }
+       ]
+   }
+   ```
+
+### API Documentation
+Once the server is running, you can access:
+- Swagger UI: `http://localhost:3000/docs`
+- ReDoc: `http://localhost:3000/redoc`
+
+### Troubleshooting
+
+1. **Port Already in Use**
+   - If port 3000 is already in use, you can change it in the uvicorn command
+   - Example: `uvicorn main:app --reload --port 3001`
+
+2. **Database Connection Issues**
+   - Verify SQL Server is running
+   - Check connection string in `database.py`
+   - Ensure you have the correct permissions
+
+3. **Module Not Found Errors**
+   - Ensure virtual environment is activated
+   - Verify all dependencies are installed
+   - Check Python path in VSCode
+
+### Development Tips
+
+1. **Hot Reload**
+   - The `--reload` flag enables automatic server restart on code changes
+   - No need to manually restart the server during development
+
+2. **Logging**
+   - Check `feedback_summary.log` for application logs
+   - Server logs appear in the terminal
+
+3. **Database Changes**
+   - After modifying models, restart the server
+   - Database tables are automatically created/updated
+
+### Environment Variables
+Create a `.env` file in the root directory with:
+```
+DB_SERVER=<your_sql_server>
+DB_NAME=weather_feedback
+DB_USER=<your_username>
+DB_PASSWORD=<your_password>
+```
+
+## Frontend Setup
+See the frontend README for Angular setup instructions.
