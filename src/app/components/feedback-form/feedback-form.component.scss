@@ -117,81 +117,112 @@
         align-items: center;
         gap: 8px;
 
-        .feedback-buttons {
+        .feedback-section {
+          padding: 16px;
           display: flex;
-          gap: 24px;
-          justify-content: center;
+          flex-direction: column;
+          align-items: center;
+          width: 100%;
+          box-sizing: border-box;
 
-          button {
-            min-width: 180px;
-            padding: 12px 24px;
-            transition: all 0.3s ease;
-            border-radius: 4px;
-            font-weight: 500;
-            font-size: 16px;
+          .feedback-buttons {
             display: flex;
+            flex-direction: row;
+            justify-content: center;
             align-items: center;
-            gap: 8px;
-            border: 2px solid transparent;
+            width: 100%;
+            gap: 4rem;
+            margin: 1rem 0;
+            padding: 0 1rem;
 
-            mat-icon {
-              font-size: 20px;
-              width: 20px;
-              height: 20px;
-            }
+            .mat-mdc-raised-button {
+              min-width: 220px !important;
+              height: 48px !important;
+              display: flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              gap: 0.5rem !important;
+              padding: 0 1.5rem !important;
+              font-size: 1rem !important;
+              transition: all 0.3s ease-in-out !important;
+              border-radius: 4px !important;
+              position: relative !important;
+              overflow: hidden !important;
 
-            &:hover {
-              transform: translateY(-2px);
-              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            }
-
-            &[color="accent"] {
-              background-color: #4caf50;
-              color: white;
-
-              &:hover {
-                background-color: #43a047;
-              }
-            }
-
-            &[color="warn"] {
-              background-color: #f44336;
-              color: white;
-
-              &:hover {
-                background-color: #e53935;
-              }
-            }
-
-            &.selected {
-              transform: scale(1.05);
-              box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-              border: 2px solid white;
-              font-weight: 600;
-
-              &[color="accent"] {
-                background-color: #43a047;
+              .mat-icon {
+                margin-right: 0.5rem !important;
+                transition: transform 0.3s ease-in-out !important;
               }
 
-              &[color="warn"] {
-                background-color: #e53935;
+              &.selected {
+                transform: scale(1.05) !important;
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2) !important;
+                border: 2px solid white !important;
+                
+                .mat-icon {
+                  transform: scale(1.2) !important;
+                }
+
+                &::after {
+                  content: '' !important;
+                  position: absolute !important;
+                  top: 0 !important;
+                  left: 0 !important;
+                  right: 0 !important;
+                  bottom: 0 !important;
+                  background: rgba(255, 255, 255, 0.1) !important;
+                  animation: pulse 2s infinite !important;
+                }
+              }
+
+              // Green button
+              &.green-button {
+                background-color: #4caf50 !important;
+                color: white !important;
+
+                &:hover {
+                  background-color: #43a047 !important;
+                  transform: translateY(-2px) !important;
+                  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+                }
+
+                &.selected {
+                  background-color: #388e3c !important;
+                  box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3) !important;
+                }
+              }
+
+              // Red button
+              &.red-button {
+                background-color: #f44336 !important;
+                color: white !important;
+
+                &:hover {
+                  background-color: #e53935 !important;
+                  transform: translateY(-2px) !important;
+                  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+                }
+
+                &.selected {
+                  background-color: #d32f2f !important;
+                  box-shadow: 0 6px 12px rgba(244, 67, 54, 0.3) !important;
+                }
               }
             }
           }
-        }
 
-        .feedback-reminder {
-          text-align: center;
-          color: #666;
-          font-size: 14px;
-          margin: 12px 0;
-          font-weight: 500;
-        }
+          .feedback-reminder {
+            text-align: center;
+            color: #666;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+          }
 
-        mat-error {
-          text-align: center;
-          margin-top: 8px;
-          font-size: 12px;
+          mat-error {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 12px;
+          }
         }
       }
     }
@@ -430,19 +461,101 @@
 }
 
 .weather-card {
-  .weather-icon-container {
-    display: flex;
-    align-items: center;
-    margin-right: 1rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease-in-out;
+  cursor: pointer;
+  position: relative;
+  overflow: visible;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
-  .weather-icon {
-    width: 64px;
-    height: 64px;
+  &.selected {
+    border: 2px solid #00539B;
+    background-color: rgba(0, 83, 155, 0.05);
+  }
+
+  .selected-indicator {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    z-index: 100;
+    pointer-events: none;
+
+    .triangle {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 0 30px 30px 0;
+      border-color: transparent #00539B transparent transparent;
+    }
+  }
+
+  mat-card-header {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    padding: 16px 16px 0;
+    position: relative;
+    z-index: 1;
+
+    .weather-icon-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      margin-right: 16px;
+      flex-shrink: 0;
+
+      .weather-icon {
+        width: 48px;
+        height: 48px;
+        object-fit: contain;
+        display: block;
+      }
+    }
+
+    mat-card-title {
+      font-size: 1.1rem;
+      margin-bottom: 0.25rem;
+      line-height: 1.2;
+    }
+
+    mat-card-subtitle {
+      font-size: 0.9rem;
+      color: #666;
+      line-height: 1.2;
+    }
   }
 
   mat-card-content {
-    margin-top: 1rem;
+    flex: 1;
+    padding: 0 16px 16px;
+    position: relative;
+    z-index: 1;
+
+    p {
+      margin: 0.5rem 0;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+
+      strong {
+        color: #333;
+        margin-right: 0.5rem;
+        min-width: 100px;
+      }
+    }
   }
 }
 
@@ -481,6 +594,148 @@
     font-size: 20px;
     height: 20px;
     width: 20px;
+  }
+}
+
+.all-areas-weather {
+  margin-top: 2rem;
+
+  h2 {
+    margin-bottom: 1rem;
+    color: #333;
+    font-size: 1.5rem;
+  }
+
+  .weather-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .weather-spinner {
+    margin: 2rem auto;
+    display: block;
+  }
+}
+
+::ng-deep .feedback-section {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+
+  .feedback-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 4rem;
+    margin: 1rem 0;
+    padding: 0 1rem;
+
+    .mat-mdc-raised-button {
+      min-width: 220px !important;
+      height: 48px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 0.5rem !important;
+      padding: 0 1.5rem !important;
+      font-size: 1rem !important;
+      transition: all 0.3s ease-in-out !important;
+      border-radius: 4px !important;
+      position: relative !important;
+      overflow: hidden !important;
+
+      .mat-icon {
+        margin-right: 0.5rem !important;
+        transition: transform 0.3s ease-in-out !important;
+      }
+
+      &.selected {
+        transform: scale(1.05) !important;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2) !important;
+        border: 2px solid white !important;
+        
+        .mat-icon {
+          transform: scale(1.2) !important;
+        }
+
+        &::after {
+          content: '' !important;
+          position: absolute !important;
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          bottom: 0 !important;
+          background: rgba(255, 255, 255, 0.1) !important;
+          animation: pulse 2s infinite !important;
+        }
+      }
+
+      // Green button
+      &.green-button {
+        background-color: #4caf50 !important;
+        color: white !important;
+
+        &:hover {
+          background-color: #43a047 !important;
+          transform: translateY(-2px) !important;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        &.selected {
+          background-color: #388e3c !important;
+          box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3) !important;
+        }
+      }
+
+      // Red button
+      &.red-button {
+        background-color: #f44336 !important;
+        color: white !important;
+
+        &:hover {
+          background-color: #e53935 !important;
+          transform: translateY(-2px) !important;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        &.selected {
+          background-color: #d32f2f !important;
+          box-shadow: 0 6px 12px rgba(244, 67, 54, 0.3) !important;
+        }
+      }
+    }
+  }
+
+  .feedback-reminder {
+    text-align: center;
+    color: #666;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+  }
+
+  mat-error {
+    text-align: center;
+    margin-top: 8px;
+    font-size: 12px;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 0.3;
   }
 }
 

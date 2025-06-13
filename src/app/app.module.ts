@@ -20,8 +20,7 @@ import { FeedbackFormComponent } from './components/feedback-form/feedback-form.
 
 @NgModule({
   declarations: [
-    AppComponent,
-    FeedbackFormComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
@@ -37,7 +36,9 @@ import { FeedbackFormComponent } from './components/feedback-form/feedback-form.
     MatSelectModule,
     MatDividerModule,
     MatProgressSpinnerModule,
-    MatCardModule
+    MatCardModule,
+    // Standalone Components
+    FeedbackFormComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

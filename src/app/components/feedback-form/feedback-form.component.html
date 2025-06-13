@@ -43,48 +43,81 @@
   </mat-form-field>
 
   <!-- Weather Information and Feedback -->
-  <div class="weather-section" *ngIf="currentWeather">
-    <mat-card class="weather-card">
+  <div class="weather-section">
+    <!-- Current Location Weather -->
+    <mat-card class="weather-card" *ngIf="currentWeather">
       <mat-card-header>
         <div *ngIf="currentWeather.condition" class="weather-icon-container">
           <img [src]="currentWeather.condition.icon" 
                [alt]="currentWeather.condition.text"
                class="weather-icon">
         </div>
-        <mat-card-title>Current Weather</mat-card-title>
+        <mat-card-title>Current Location Weather</mat-card-title>
       </mat-card-header>
       <mat-card-content>
         <p><strong>Condition:</strong> {{currentWeather.condition?.text || 'N/A'}}</p>
         <p><strong>Temperature:</strong> {{currentWeather.temp_c !== undefined ? currentWeather.temp_c + '°C' : 'N/A'}}</p>
         <p><strong>UV Index:</strong> {{currentWeather.uv !== undefined ? currentWeather.uv : 'N/A'}}</p>
       </mat-card-content>
-      <mat-card-actions>
-        <div class="feedback-buttons">
-          <button mat-raised-button
-                  type="button"
-                  color="accent"
-                  [class.selected]="selectedFeedback === 'positive'"
-                  (click)="setWeatherFeedback('positive')"
-                  matTooltip="No action required for this weather">
-            <mat-icon>check_circle</mat-icon>
-            No Action Required
-          </button>
-          <button mat-raised-button
-                  type="button"
-                  color="warn"
-                  [class.selected]="selectedFeedback === 'negative'"
-                  (click)="setWeatherFeedback('negative')"
-                  matTooltip="Action required for this weather">
-            <mat-icon>warning</mat-icon>
-            Action Required
-          </button>
-        </div>
-        <p class="feedback-reminder">Please select whether action is required for this weather condition</p>
-        <mat-error *ngIf="feedbackForm.get('weatherFeedback')?.errors?.['required'] && feedbackForm.get('weatherFeedback')?.touched">
-          Please select your weather feedback
-        </mat-error>
-      </mat-card-actions>
     </mat-card>
+
+    <!-- All Areas Weather -->
+    <div class="all-areas-weather">
+      <h2>Weather for All Areas (Please select the location to give feedback)</h2>
+      <div class="weather-grid" *ngIf="!isLoadingWeather">
+        <mat-card class="weather-card" 
+                 *ngFor="let weather of multipleWeatherData"
+                 [class.selected]="isCardSelected(weather)"
+                 (click)="selectWeatherCard(weather)">
+          <div class="selected-indicator" *ngIf="isCardSelected(weather)">
+            <div class="triangle"></div>
+          </div>
+          <mat-card-header>
+            <div *ngIf="weather.current.condition" class="weather-icon-container">
+              <img [src]="weather.current.condition.icon" 
+                   [alt]="weather.current.condition.text"
+                   class="weather-icon">
+            </div>
+            <mat-card-title>{{getAreaForPostalCode(weather.postalCode)}}</mat-card-title>
+            <mat-card-subtitle>{{weather.postalCode}}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p><strong>Condition:</strong> {{weather.current.condition?.text || 'N/A'}}</p>
+            <p><strong>Temperature:</strong> {{weather.current.temp_c !== undefined ? weather.current.temp_c + '°C' : 'N/A'}}</p>
+            <p><strong>UV Index:</strong> {{weather.current.uv !== undefined ? weather.current.uv : 'N/A'}}</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <mat-spinner *ngIf="isLoadingWeather" class="weather-spinner"></mat-spinner>
+    </div>
+
+    <!-- Feedback Buttons -->
+    <div class="feedback-section" *ngIf="selectedCard || currentWeather">
+      <div class="feedback-buttons">
+        <button mat-raised-button 
+                type="button"
+                class="mat-mdc-raised-button green-button"
+                [class.selected]="selectedFeedback === 'positive'"
+                (click)="setWeatherFeedback('positive')"
+                matTooltip="No action required for this weather">
+          <mat-icon>check_circle</mat-icon>
+          No Action Required
+        </button>
+        <button mat-raised-button 
+                type="button"
+                class="mat-mdc-raised-button red-button"
+                [class.selected]="selectedFeedback === 'negative'"
+                (click)="setWeatherFeedback('negative')"
+                matTooltip="Action required for this weather">
+          <mat-icon>warning</mat-icon>
+          Action Required
+        </button>
+      </div>
+      <p class="feedback-reminder">Please select whether action is required for this weather condition</p>
+      <mat-error *ngIf="feedbackForm.get('weatherFeedback')?.errors?.['required'] && feedbackForm.get('weatherFeedback')?.touched">
+        Please select your weather feedback
+      </mat-error>
+    </div>
   </div>
 
   <!-- Date and Time Section -->

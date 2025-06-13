@@ -47,7 +47,7 @@ def get_unsent_feedback():
         query = """
             SELECT 
                 id,
-                CASE WHEN is_satisfied = 1 THEN 'Satisfied' ELSE 'Unsatisfied' END as satisfaction,
+                CASE WHEN actionRequired = 1 THEN 'Action Required' ELSE 'No Action Required' END as action_status,
                 postalCode,
                 municipality,
                 feedback,
@@ -84,11 +84,11 @@ def create_email_content(feedback_records):
     <html>
     <head>
         <style>
-            table {{ border-collapse: collapse; width: 100%; }}
-            th, td {{ padding: 8px; text-align: left; border: 1px solid #ddd; }}
-            th {{ background-color: #f2f2f2; }}
-            .satisfied {{ color: green; }}
-            .unsatisfied {{ color: red; }}
+            table { border-collapse: collapse; width: 100%; }
+            th, td { padding: 8px; text-align: left; border: 1px solid #ddd; }
+            th { background-color: #f2f2f2; }
+            .no-action { color: green; }
+            .action-required { color: red; }
         </style>
     </head>
     <body>
@@ -98,18 +98,18 @@ def create_email_content(feedback_records):
             <tr>
                 <th>Date</th>
                 <th>Location</th>
-                <th>Satisfaction</th>
+                <th>Action Status</th>
                 <th>Feedback</th>
             </tr>
     """.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
     for record in feedback_records:
-        satisfaction_class = "satisfied" if record.satisfaction == "Satisfied" else "unsatisfied"
+        status_class = "no-action" if record.action_status == "No Action Required" else "action-required"
         html_content += f"""
             <tr>
                 <td>{record.dateOfInteraction.strftime("%Y-%m-%d %H:%M")}</td>
                 <td>{record.municipality} ({record.postalCode})</td>
-                <td class="{satisfaction_class}">{record.satisfaction}</td>
+                <td class="{status_class}">{record.action_status}</td>
                 <td>{record.feedback if record.feedback else '-'}</td>
             </tr>
         """

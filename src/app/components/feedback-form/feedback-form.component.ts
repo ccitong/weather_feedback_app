@@ -1,14 +1,36 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { GeocodingService, LocationData } from '../../services/geocoding.service';
 import { FeedbackService, FeedbackData } from '../../services/feedback.service';
-import { WeatherService, WeatherData } from '../../services/weather.service';
+import { WeatherService, WeatherData, WeatherDataWithPostalCode } from '../../services/weather.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatCardModule } from '@angular/material/card';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-feedback-form',
   templateUrl: './feedback-form.component.html',
-  styleUrls: ['./feedback-form.component.scss']
+  styleUrls: ['./feedback-form.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSelectModule,
+    MatDividerModule,
+    MatProgressSpinnerModule,
+    MatCardModule
+  ]
 })
 export class FeedbackFormComponent implements OnInit {
   feedbackForm!: FormGroup;
@@ -22,6 +44,36 @@ export class FeedbackFormComponent implements OnInit {
   currentWeather: WeatherData['current'] | null = null;
   isLoadingMunicipality: boolean = false;
   selectedFeedback: 'positive' | 'negative' | null = null;
+  multipleWeatherData: WeatherDataWithPostalCode[] = [];
+  isLoadingWeather: boolean = false;
+  selectedCard: WeatherDataWithPostalCode | null = null;
+
+  // Define the postal codes and their areas with complete postal codes
+  postalCodeAreas = [
+    { fsa: 'L0G', area: 'East Gwillimbury / Georgina / Whitchurch–Stouffville', completePostalCode: 'L0G 1A0' },
+    { fsa: 'L0E', area: 'Georgina (includes Pefferlaw, Sutton)', completePostalCode: 'L0E 1A0' },
+    { fsa: 'L0J', area: 'Kleinburg (Vaughan area)', completePostalCode: 'L0J 1A0' },
+    { fsa: 'L3P', area: 'Markham (central)', completePostalCode: 'L3P 1A0' },
+    { fsa: 'L3R', area: 'Markham (east)', completePostalCode: 'L3R 1A0' },
+    { fsa: 'L3S', area: 'Markham (southeast)', completePostalCode: 'L3S 1A0' },
+    { fsa: 'L3T', area: 'Thornhill (Markham/Vaughan border)', completePostalCode: 'L3T 1A0' },
+    { fsa: 'L3X', area: 'Newmarket (northwest)', completePostalCode: 'L3X 1A0' },
+    { fsa: 'L3Y', area: 'Newmarket (central)', completePostalCode: 'L3Y 1A0' },
+    { fsa: 'L3Z', area: 'Bradford West Gwillimbury (partially York)', completePostalCode: 'L3Z 1A0' },
+    { fsa: 'L4A', area: 'Whitchurch–Stouffville', completePostalCode: 'L4A 1A0' },
+    { fsa: 'L4B', area: 'Richmond Hill (southwest business area)', completePostalCode: 'L4B 1A0' },
+    { fsa: 'L4C', area: 'Richmond Hill (central)', completePostalCode: 'L4C 1A0' },
+    { fsa: 'L4E', area: 'Richmond Hill (Oak Ridges)', completePostalCode: 'L4E 1A0' },
+    { fsa: 'L4G', area: 'Aurora', completePostalCode: 'L4G 1A0' },
+    { fsa: 'L4H', area: 'Vaughan (Woodbridge)', completePostalCode: 'L4H 1A0' },
+    { fsa: 'L4J', area: 'Thornhill (Vaughan/Markham)', completePostalCode: 'L4J 1A0' },
+    { fsa: 'L4K', area: 'Vaughan (Concord, business area)', completePostalCode: 'L4K 1A0' },
+    { fsa: 'L4L', area: 'Vaughan (West Woodbridge)', completePostalCode: 'L4L 1A0' },
+    { fsa: 'L6A', area: 'Vaughan (Maple)', completePostalCode: 'L6A 1A0' },
+    { fsa: 'L6B', area: 'Markham (Cornell / Box Grove)', completePostalCode: 'L6B 1A0' },
+    { fsa: 'L6C', area: 'Markham (Cathedraltown / Cachet)', completePostalCode: 'L6C 1A0' },
+    { fsa: 'L6E', area: 'Markham (Greensborough / Wismer)', completePostalCode: 'L6E 1A0' }
+  ];
 
   constructor(
     private fb: FormBuilder,
@@ -54,6 +106,26 @@ export class FeedbackFormComponent implements OnInit {
     postalCodeControl?.valueChanges.subscribe(value => {
       this.remainingChars = 7 - (value ? value.length : 0);
     });
+
+    // Load weather data for all postal codes
+    this.loadAllWeatherData();
+  }
+
+  loadAllWeatherData(): void {
+    this.isLoadingWeather = true;
+    const postalCodes = this.postalCodeAreas.map(area => area.completePostalCode);
+    
+    this.weatherService.getWeatherForMultiplePostalCodes(postalCodes)
+      .subscribe({
+        next: (data) => {
+          this.multipleWeatherData = data;
+          this.isLoadingWeather = false;
+        },
+        error: (error) => {
+          console.error('Error loading weather data:', error);
+          this.isLoadingWeather = false;
+        }
+      });
   }
 
   onPostalCodeKeyUp(event: KeyboardEvent): void {
@@ -62,6 +134,20 @@ export class FeedbackFormComponent implements OnInit {
       if (postalCode && /^[A-Za-z][0-9][A-Za-z]\s?[0-9][A-Za-z][0-9]$/.test(postalCode)) {
         this.handlePostalCodeChange(postalCode);
       }
+    }
+  }
+
+  selectWeatherCard(weather: WeatherDataWithPostalCode): void {
+    this.selectedCard = weather;
+    this.selectedFeedback = null;
+    const areaInfo = this.postalCodeAreas.find(area => area.completePostalCode === weather.postalCode);
+    
+    if (areaInfo) {
+      this.feedbackForm.patchValue({
+        postalCode: areaInfo.completePostalCode,
+        municipality: areaInfo.area,
+        weatherFeedback: ''
+      });
     }
   }
 
@@ -111,6 +197,7 @@ export class FeedbackFormComponent implements OnInit {
       this.isLoadingMunicipality = true;
       this.currentWeather = null; // Clear previous weather data
       this.selectedFeedback = null; // Reset feedback when getting new location
+      this.selectedCard = null; // Clear selected card
       this.feedbackForm.patchValue({ weatherFeedback: '' }); // Reset weather feedback in form
       
       console.log('Getting current position...');
@@ -150,13 +237,12 @@ export class FeedbackFormComponent implements OnInit {
             this.isLoadingMunicipality = false;
           },
           complete: () => {
-            console.log('Geocoding request completed');
             this.isGettingLocation = false;
             this.isLoadingMunicipality = false;
           }
         });
     } catch (error) {
-      console.error('Error getting location:', error instanceof Error ? error.message : 'Unknown error');
+      console.error('Error getting location:', error);
       this.isGettingLocation = false;
       this.isLoadingMunicipality = false;
     }
@@ -188,7 +274,7 @@ export class FeedbackFormComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.feedbackForm.valid) {
+    if (this.feedbackForm.valid && (this.selectedCard || this.currentWeather)) {
       this.isSubmitting = true;
       this.submitError = null;
       this.submitSuccess = false;
@@ -203,11 +289,13 @@ export class FeedbackFormComponent implements OnInit {
 
       const feedbackData: FeedbackData = {
         actionRequired: formData.weatherFeedback === 'negative',
-        postalCode: formData.postalCode.toUpperCase(),
+        postalCode: formData.postalCode,
         municipality: formData.municipality,
         feedback: formData.feedback || undefined,
         dateOfInteraction: formData.dateOfInteraction
       };
+
+      console.log('Submitting feedback data:', feedbackData);
 
       this.feedbackService.submitFeedback(feedbackData).subscribe({
         next: (response: any) => {
@@ -216,17 +304,28 @@ export class FeedbackFormComponent implements OnInit {
           this.submitSuccess = true;
           this.feedbackForm.reset();
           this.selectedFeedback = null;
+          this.selectedCard = null;
+          this.currentWeather = null;
           // Pre-fill the date again after reset
           this.feedbackForm.patchValue({
             dateOfInteraction: this.currentDateTime
           });
         },
         error: (error: HttpErrorResponse) => {
-          console.error('Error submitting feedback:', error.message);
+          console.error('Error submitting feedback:', error);
           this.isSubmitting = false;
-          this.submitError = 'An error occurred while submitting your feedback. Please try again.';
+          this.submitError = error.error?.detail || 'An error occurred while submitting your feedback. Please try again.';
         }
       });
     }
+  }
+
+  getAreaForPostalCode(postalCode: string): string {
+    const area = this.postalCodeAreas.find(area => area.completePostalCode === postalCode);
+    return area ? area.area : 'Unknown Area';
+  }
+
+  isCardSelected(weather: WeatherDataWithPostalCode): boolean {
+    return this.selectedCard?.postalCode === weather.postalCode;
   }
 }

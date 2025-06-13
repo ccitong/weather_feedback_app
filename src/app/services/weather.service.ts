@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin, map } from 'rxjs';
 
 export interface WeatherData {
   current: {
@@ -11,6 +11,15 @@ export interface WeatherData {
     };
     uv: number;
   };
+  location?: {
+    name: string;
+    region: string;
+  };
+}
+
+export interface WeatherDataWithPostalCode extends WeatherData {
+  postalCode: string;
+  completePostalCode: string;
 }
 
 @Injectable({
@@ -24,5 +33,18 @@ export class WeatherService {
 
   getWeatherByPostalCode(postalCode: string): Observable<WeatherData> {
     return this.http.get<WeatherData>(`${this.API_URL}?key=${this.API_KEY}&q=${postalCode}`);
+  }
+
+  getWeatherForMultiplePostalCodes(postalCodes: string[]): Observable<WeatherDataWithPostalCode[]> {
+    const requests = postalCodes.map(postalCode => 
+      this.getWeatherByPostalCode(postalCode).pipe(
+        map(data => ({
+          ...data,
+          postalCode,
+          completePostalCode: postalCode
+        }))
+      )
+    );
+    return forkJoin(requests);
   }
 } 
