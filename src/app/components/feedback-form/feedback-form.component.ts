@@ -12,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -29,7 +30,8 @@ import { CommonModule } from '@angular/common';
     MatSelectModule,
     MatDividerModule,
     MatProgressSpinnerModule,
-    MatCardModule
+    MatCardModule,
+    MatExpansionModule
   ]
 })
 export class FeedbackFormComponent implements OnInit {
@@ -134,6 +136,13 @@ export class FeedbackFormComponent implements OnInit {
       if (postalCode && /^[A-Za-z][0-9][A-Za-z]\s?[0-9][A-Za-z][0-9]$/.test(postalCode)) {
         this.handlePostalCodeChange(postalCode);
       }
+    }
+  }
+
+  onEnterIconClick(): void {
+    const postalCode = this.feedbackForm.get('postalCode')?.value;
+    if (postalCode && /^[A-Za-z][0-9][A-Za-z]\s?[0-9][A-Za-z][0-9]$/.test(postalCode)) {
+      this.handlePostalCodeChange(postalCode);
     }
   }
 

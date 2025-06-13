@@ -48,6 +48,28 @@
 
     mat-form-field {
       flex: 1;
+
+      .enter-icon {
+        color: #666;
+        font-size: 20px;
+        height: 20px;
+        width: 20px;
+        margin-right: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        padding: 4px;
+        border-radius: 4px;
+
+        &:hover {
+          color: #333;
+          background-color: rgba(0, 0, 0, 0.04);
+          transform: scale(1.1);
+        }
+
+        &:active {
+          transform: scale(0.95);
+        }
+      }
     }
 
     button {
@@ -600,10 +622,40 @@
 .all-areas-weather {
   margin-top: 2rem;
 
-  h2 {
-    margin-bottom: 1rem;
-    color: #333;
-    font-size: 1.5rem;
+  ::ng-deep .mat-expansion-panel {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    box-shadow: none !important;
+  }
+
+  ::ng-deep .mat-expansion-panel-header {
+    padding: 1rem;
+    height: auto !important;
+    min-height: 48px;
+    
+    .mat-expansion-panel-header-title {
+      margin-right: 0;
+      flex-grow: 0;
+      white-space: nowrap;
+      
+      h2 {
+        margin: 0;
+        color: #333;
+        font-size: 1.5rem;
+        white-space: nowrap;
+      }
+    }
+
+    .mat-expansion-panel-header-description {
+      color: #666;
+      font-size: 0.9rem;
+      margin-left: 6.5rem;
+      flex-grow: 1;
+    }
+  }
+
+  ::ng-deep .mat-expansion-panel-body {
+    padding: 1rem;
   }
 
   .weather-grid {

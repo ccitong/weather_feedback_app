@@ -9,6 +9,10 @@
              maxlength="7"
              (keyup)="onPostalCodeKeyUp($event)">
       <mat-hint align="end">{{remainingChars}} characters remaining</mat-hint>
+      <mat-icon matSuffix 
+                class="enter-icon" 
+                matTooltip="Press Enter or click to submit"
+                (click)="onEnterIconClick()">keyboard_return</mat-icon>
       <mat-error *ngIf="feedbackForm.get('postalCode')?.errors?.['required']">
         Postal code is required
       </mat-error>
@@ -62,8 +66,16 @@
     </mat-card>
 
     <!-- All Areas Weather -->
-    <div class="all-areas-weather">
-      <h2>Weather for All Areas (Please select the location to give feedback)</h2>
+    <mat-expansion-panel class="all-areas-weather">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <h2>Weather for All Areas</h2>
+        </mat-panel-title>
+        <mat-panel-description>
+          Click to expand and select a location to give feedback
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
       <div class="weather-grid" *ngIf="!isLoadingWeather">
         <mat-card class="weather-card" 
                  *ngFor="let weather of multipleWeatherData"
@@ -89,10 +101,10 @@
         </mat-card>
       </div>
       <mat-spinner *ngIf="isLoadingWeather" class="weather-spinner"></mat-spinner>
-    </div>
+    </mat-expansion-panel>
 
     <!-- Feedback Buttons -->
-    <div class="feedback-section" *ngIf="selectedCard || currentWeather">
+    <div class="feedback-section">
       <div class="feedback-buttons">
         <button mat-raised-button 
                 type="button"
