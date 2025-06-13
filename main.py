@@ -29,7 +29,7 @@ app.add_middleware(
 
 # Pydantic model for request validation
 class WeatherFeedbackCreate(BaseModel):
-    is_satisfied: bool                                        # True for satisfied/positive, False for unsatisfied/negative
+    actionRequired: bool                                        # True for action required, False for no action required
     postalCode: constr(pattern=r'^[A-Za-z][0-9][A-Za-z]\s?[0-9][A-Za-z][0-9]$')  # Canadian postal code format
     municipality: constr(min_length=1, max_length=100)      # City/municipality
     feedback: Optional[str] = None                          # Optional feedback text
@@ -54,7 +54,7 @@ async def create_feedback(
 
         # Create new feedback entry
         db_feedback = models.WeatherFeedback(
-            is_satisfied=feedback.is_satisfied,
+            actionRequired=feedback.actionRequired,
             postalCode=feedback.postalCode.upper(),  # Ensure postal code is uppercase
             municipality=feedback.municipality,
             feedback=feedback.feedback,

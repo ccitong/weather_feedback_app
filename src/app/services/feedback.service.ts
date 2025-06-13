@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface FeedbackData {
-  is_satisfied: boolean;
+  actionRequired: boolean;
   postalCode: string;
   municipality: string;
   feedback?: string;

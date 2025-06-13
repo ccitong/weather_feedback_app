@@ -6,7 +6,7 @@ class WeatherFeedback(Base):
     __tablename__ = "weather_feedback"
 
     id = Column(Integer, primary_key=True)  # SQL Server will use IDENTITY
-    is_satisfied = Column(Boolean, nullable=False)    # True for satisfied/positive, False for unsatisfied/negative
+    actionRequired = Column(Boolean, nullable=False)    # True for action required, False for no action required
     postalCode = Column(String(7), nullable=False)           # Canadian postal code
     municipality = Column(String(100), nullable=False)        # City/municipality
     feedback = Column(String(500), nullable=True)            # Optional feedback text

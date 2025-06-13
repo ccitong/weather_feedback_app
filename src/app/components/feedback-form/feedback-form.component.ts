@@ -202,7 +202,7 @@ export class FeedbackFormComponent implements OnInit {
       }
 
       const feedbackData: FeedbackData = {
-        is_satisfied: formData.weatherFeedback === 'positive',
+        actionRequired: formData.weatherFeedback === 'negative',
         postalCode: formData.postalCode.toUpperCase(),
         municipality: formData.municipality,
         feedback: formData.feedback || undefined,

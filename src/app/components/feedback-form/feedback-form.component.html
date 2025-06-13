@@ -60,23 +60,26 @@
       </mat-card-content>
       <mat-card-actions>
         <div class="feedback-buttons">
-          <button mat-icon-button
+          <button mat-raised-button
                   type="button"
-                  color="primary"
+                  color="accent"
                   [class.selected]="selectedFeedback === 'positive'"
                   (click)="setWeatherFeedback('positive')"
-                  matTooltip="I like this weather">
-            <mat-icon>thumb_up</mat-icon>
+                  matTooltip="No action required for this weather">
+            <mat-icon>check_circle</mat-icon>
+            No Action Required
           </button>
-          <button mat-icon-button
+          <button mat-raised-button
                   type="button"
                   color="warn"
                   [class.selected]="selectedFeedback === 'negative'"
                   (click)="setWeatherFeedback('negative')"
-                  matTooltip="I don't like this weather">
-            <mat-icon>thumb_down</mat-icon>
+                  matTooltip="Action required for this weather">
+            <mat-icon>warning</mat-icon>
+            Action Required
           </button>
         </div>
+        <p class="feedback-reminder">Please select whether action is required for this weather condition</p>
         <mat-error *ngIf="feedbackForm.get('weatherFeedback')?.errors?.['required'] && feedbackForm.get('weatherFeedback')?.touched">
           Please select your weather feedback
         </mat-error>
