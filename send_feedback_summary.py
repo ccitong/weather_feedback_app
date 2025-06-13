@@ -51,7 +51,9 @@ def get_unsent_feedback():
                 postalCode,
                 municipality,
                 feedback,
-                dateOfInteraction
+                dateOfInteraction,
+                weather
+               
             FROM weather_feedback
             WHERE sentDate IS NULL
             ORDER BY dateOfInteraction DESC
@@ -80,46 +82,49 @@ def create_email_content(feedback_records):
     if not feedback_records:
         return "No new feedback to report."
 
-    html_content = """
+    html_content = f"""
     <html>
     <head>
         <style>
-            table { border-collapse: collapse; width: 100%; }
-            th, td { padding: 8px; text-align: left; border: 1px solid #ddd; }
-            th { background-color: #f2f2f2; }
-            .no-action { color: green; }
-            .action-required { color: red; }
+            table {{ border-collapse: collapse; width: 100%; }}
+            th, td {{ padding: 8px; text-align: left; border: 1px solid #ddd; }}
+            th {{ background-color: #f2f2f2; }}
+            .no-action {{ color: green; }}
+            .action-required {{ color: red; }}
         </style>
     </head>
     <body>
         <h2>Weather Feedback Summary</h2>
-        <p>Generated on: {}</p>
+        <p>Generated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}</p>
         <table>
             <tr>
                 <th>Date</th>
                 <th>Location</th>
+                <th>Weather</th>
                 <th>Action Status</th>
                 <th>Feedback</th>
             </tr>
-    """.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    """
 
     for record in feedback_records:
         status_class = "no-action" if record.action_status == "No Action Required" else "action-required"
+        weather_info = record.weather if record.weather else '-'
         html_content += f"""
             <tr>
                 <td>{record.dateOfInteraction.strftime("%Y-%m-%d %H:%M")}</td>
                 <td>{record.municipality} ({record.postalCode})</td>
+                <td>{weather_info}</td>
                 <td class="{status_class}">{record.action_status}</td>
                 <td>{record.feedback if record.feedback else '-'}</td>
             </tr>
         """
 
-    html_content += """
+    html_content += f"""
         </table>
-        <p>Total records: {}</p>
+        <p>Total records: {len(feedback_records)}</p>
     </body>
     </html>
-    """.format(len(feedback_records))
+    """
 
     return html_content
 

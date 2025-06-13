@@ -10,4 +10,5 @@ class WeatherFeedback(Base):
     postalCode = Column(String(7), nullable=False)           # Canadian postal code
     municipality = Column(String(100), nullable=False)        # City/municipality
     feedback = Column(String(500), nullable=True)            # Optional feedback text
-    dateOfInteraction = Column(DateTime, nullable=False)      # Date and time of weather interaction 
+    dateOfInteraction = Column(DateTime, nullable=False)      # Date and time of weather interaction
+    weather = Column(String(200), nullable=False)            # Weather information (condition, temperature, UV) 

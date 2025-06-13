@@ -296,12 +296,19 @@ export class FeedbackFormComponent implements OnInit {
         formData.dateOfInteraction = new Date(this.getESTDateTime(date)).toISOString();
       }
 
+      // Get weather information from either selected card or current weather
+      const weatherData = this.selectedCard?.current || this.currentWeather;
+      const weatherInfo = weatherData ? 
+        `Condition: ${weatherData.condition?.text || 'N/A'}, Temperature: ${weatherData.temp_c !== undefined ? weatherData.temp_c + '°C' : 'N/A'}, UV: ${weatherData.uv !== undefined ? weatherData.uv : 'N/A'}` :
+        'Weather data not available';
+
       const feedbackData: FeedbackData = {
         actionRequired: formData.weatherFeedback === 'negative',
         postalCode: formData.postalCode,
         municipality: formData.municipality,
         feedback: formData.feedback || undefined,
-        dateOfInteraction: formData.dateOfInteraction
+        dateOfInteraction: formData.dateOfInteraction,
+        weather: weatherInfo
       };
 
       console.log('Submitting feedback data:', feedbackData);

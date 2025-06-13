@@ -8,11 +8,12 @@ GO
 -- Create the new table with the updated schema
 CREATE TABLE weather_feedback (
     id INT IDENTITY(1,1) PRIMARY KEY,
-    is_satisfied BIT NOT NULL,
+    actionRequired BIT NOT NULL,
     postalCode NVARCHAR(7) NOT NULL,
     municipality NVARCHAR(100) NOT NULL,
     feedback NVARCHAR(500) NULL,
-    dateOfInteraction DATETIME NOT NULL
+    dateOfInteraction DATETIME NOT NULL,
+    weather NVARCHAR(200) NOT NULL
 );
 GO
 
@@ -20,21 +21,23 @@ GO
 IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[weather_feedback_old]') AND type in (N'U'))
 BEGIN
     INSERT INTO weather_feedback (
-        is_satisfied,
+        actionRequired,
         postalCode,
         municipality,
         feedback,
-        dateOfInteraction
+        dateOfInteraction,
+        weather
     )
     SELECT 
         CASE 
-            WHEN weatherCondition IN ('Satisfied', 'positive') THEN 1
-            ELSE 0
-        END as is_satisfied,
+            WHEN weatherCondition IN ('Satisfied', 'positive') THEN 0
+            ELSE 1
+        END as actionRequired,
         postalCode,
         municipality,
         feedback,
-        dateOfInteraction
+        dateOfInteraction,
+        'Weather data not available' as weather
     FROM weather_feedback_old;
 
     -- Drop the old table after successful migration

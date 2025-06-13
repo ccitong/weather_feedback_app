@@ -8,6 +8,7 @@ export interface FeedbackData {
   municipality: string;
   feedback?: string;
   dateOfInteraction: string;
+  weather: string;
 }
 
 @Injectable({

@@ -34,6 +34,7 @@ class WeatherFeedbackCreate(BaseModel):
     municipality: constr(min_length=1, max_length=100)      # City/municipality
     feedback: Optional[str] = None                          # Optional feedback text
     dateOfInteraction: str                                  # Date and time as string from Angular
+    weather: Optional[str] = None                           # Optional weather information
 
 @app.post("/feedback")
 async def create_feedback(
@@ -52,13 +53,14 @@ async def create_feedback(
             logger.error(f"Date parsing error: {e}")
             raise HTTPException(status_code=400, detail=f"Invalid date format: {feedback.dateOfInteraction}")
 
-        # Create new feedback entry
+        # Create new feedback entry with explicit column mapping
         db_feedback = models.WeatherFeedback(
             actionRequired=feedback.actionRequired,
             postalCode=feedback.postalCode.upper(),  # Ensure postal code is uppercase
             municipality=feedback.municipality,
             feedback=feedback.feedback,
-            dateOfInteraction=date_of_interaction
+            dateOfInteraction=date_of_interaction,
+            weather=feedback.weather or 'Weather data not available'  # Provide default value if None
         )
         
         logger.info("Attempting to add feedback to database")
